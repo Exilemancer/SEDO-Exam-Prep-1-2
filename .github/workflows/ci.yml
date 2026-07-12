@@ -1,0 +1,32 @@
+name: .NET CI
+
+on:
+  push:
+    branches:
+      - develop
+      - 'feature/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore SoftUniBazar.sln
+
+      - name: Build
+        run: dotnet build SoftUniBazar.sln --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: dotnet test SoftUniBazar.Tests/SoftUniBazar.Tests.csproj --configuration Release --no-build
+
+      - name: Run Integration Tests
+        run: dotnet test SoftUniBazar.IntegrationTests/SoftUniBazar.IntegrationTests.csproj --configuration Release --no-build
